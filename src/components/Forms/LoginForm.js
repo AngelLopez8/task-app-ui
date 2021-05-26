@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const LoginForm = ({ setLogin }) => {
 
@@ -15,9 +12,10 @@ const LoginForm = ({ setLogin }) => {
 
     const login = async () => {
         try {
-            const { data } = await axios.post(process.env.URL+"users/login", { email, password });
+            console.log(process.env.REACT_APP_API_URL)
+            const { data } = await axios.post(process.env.REACT_APP_API_URL+"users/login", { email, password });
             setUser(data.user);
-            setAuth(process.env.SECRET + " " + data.token)
+            setAuth(process.env.REACT_APP_API_SECRET + " " + data.token)
             setLogin(true);
             setRedirect(true);
         } catch (err) {

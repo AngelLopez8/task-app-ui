@@ -15,7 +15,7 @@ const Tasks = () => {
     useEffect( () => {
         const getTasks = async () => {
             try {
-                const { data } = await axios.get(process.env.URL+"tasks/", config);
+                const { data } = await axios.get(process.env.REACT_APP_API_URL+"tasks/", config);
                 setTasks(data);
             } catch (err) {
                 console.log(err);

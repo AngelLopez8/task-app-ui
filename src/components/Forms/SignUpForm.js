@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const SignUpForm = ({ setLogin }) => {
     
@@ -18,7 +15,7 @@ const SignUpForm = ({ setLogin }) => {
 
     const signUp = async () => {
         try {
-            const { data } = await axios.post(process.env.URL+"users/", { name, email, password, age });
+            const { data } = await axios.post(process.env.REACT_APP_API_URL+"users/", { name, email, password, age });
             setUser(data.user);
             setAuth(process.env.SECRET + " " + data.token);
             setLogin(true);

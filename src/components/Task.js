@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const Task = ({ description, completed, _id, config, setTasks }) => {
 
@@ -16,7 +13,7 @@ const Task = ({ description, completed, _id, config, setTasks }) => {
     const updateTask = async () => {
         try {
             await axios.patch(
-                `${process.env.URL}tasks/${_id}`, 
+                `${process.env.REACT_APP_API_URL}tasks/${_id}`, 
                 { 'completed': check, 'description': desc}, 
                 config);
             setTasks([]);
@@ -27,7 +24,7 @@ const Task = ({ description, completed, _id, config, setTasks }) => {
 
     const deleteTask = async () => {
         try {
-            await axios.delete(`${process.env.URL}tasks/${_id}`, config);
+            await axios.delete(`${process.env.REACT_APP_API_URL}tasks/${_id}`, config);
             setTasks([]);
         } catch (err) {
             console.log(err);

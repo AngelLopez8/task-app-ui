@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const CreateTaskForm = () => {
 
@@ -14,7 +11,7 @@ const CreateTaskForm = () => {
 
     const createTask = async () => {
         try {
-            const { data } = await axios.post(process.env.URL+"tasks/", task, config);
+            const { data } = await axios.post(process.env.REACT_APP_API_URL+"tasks/", task, config);
             setTask(data);
             setRedirect(true);
         } catch (err) {
