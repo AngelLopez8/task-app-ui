@@ -12,7 +12,6 @@ const LoginForm = ({ setLogin }) => {
 
     const login = async () => {
         try {
-            console.log(process.env.REACT_APP_API_URL)
             const { data } = await axios.post(process.env.REACT_APP_API_URL+"users/login", { email, password });
             setUser(data.user);
             setAuth(process.env.REACT_APP_API_SECRET + " " + data.token)
