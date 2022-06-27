@@ -1,62 +1,104 @@
 import React, { useEffect, useState } from 'react';
-import { Redirect, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import Task from './Task';
 
 const Tasks = () => {
 
-    const { state: { user, config }} = useLocation();
+    const navigate = useNavigate();
 
+    const [ user, setUser] = useState({});
     const [ tasks, setTasks ] = useState([]);
-    const [ create, setCreate ] = useState(false);
     const [ logout, setLogout ] = useState(false);
 
     useEffect( () => {
-        const getTasks = async () => {
-            try {
-                const { data } = await axios.get(process.env.REACT_APP_API_URL+"tasks/", config);
-                setTasks(data);
-            } catch (err) {
-                console.log(err);
-            }
-        };
-        getTasks();
-    }, [tasks]);
+        const loggedInUser = window.localStorage.getItem('user');
+        if (loggedInUser) {
+            const data = JSON.parse(loggedInUser);
+            setUser(data);
+        } else {
+            navigate('/login');
+        }
+    }, []);
 
-    if (create) {
-        return <Redirect to={{
-            pathname: '/create',
-            state: { user, config }
-        }} />;
+    const getTasks = async () => {
+        try {
+            const { data } = await axios.get(process.env.REACT_APP_API_URL+"tasks", {
+                headers: {
+                    Authorization: user.Authorization
+                }
+            });
+            setTasks(data);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const handle_create = async () => {
+        try {
+            const { data } = await axios.post(process.env.REACT_APP_API_URL+"tasks", { description: "TESTING "}, {
+                headers: {
+                    Authorization: user.Authorization
+                }
+            });
+            console.log(data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const handle_logout = async () => {
+        try {
+            await axios.post(process.env.REACT_APP_API_URL+"users/logout", {}, {
+                headers: {
+                    Authorization: user.Authorization
+                }
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    if (user.Authorization) {
+        getTasks();
     }
 
     if (logout) {
-        return <Redirect to="/login" />;
+        window.localStorage.removeItem('user');
+        handle_logout();
+        navigate('/login');
     }
-
 
     return (
         <section>
-            <button onClick={ () => setLogout(!logout)}
+            <button onClick={ e => { 
+                e.preventDefault();
+                setLogout(!logout);
+            }}
             >Logout</button>
             <section className="tasks">
-                <h1>{user.name}</h1>
+                <h1>{
+                    user.user ? user.user.name : ""
+                }</h1>
                 <h1>Tasks</h1>
-                <button onClick={() => setCreate(!create)}>Create Task</button>
+                <button onClick={() => handle_create()}>Create Task</button>
                 <table>
-                    <tr>
-                        <th>Complete</th>
-                        <th>Task</th>
-                    </tr>
-                    {tasks.map( task => {
-                        return <Task key={task._id}
-                        description={task.description}
-                        completed={task.completed}
-                        _id={task._id}
-                        config={config}
-                        setTasks={setTasks}/>
-                    })}
+                    <tbody>
+                        <tr>
+                            <th>Complete</th>
+                            <th>Task</th>
+                        </tr>
+                        {tasks.map( task => {
+                            return <Task key={task._id}
+                            description={task.description}
+                            completed={task.completed}
+                            _id={task._id}
+                            user={user}
+                            setTasks={setTasks}
+                            />
+                        })}
+                    </tbody>
                 </table>
             </section>
         </section>

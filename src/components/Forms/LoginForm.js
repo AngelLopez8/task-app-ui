@@ -1,32 +1,34 @@
-import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const LoginForm = ({ setLogin }) => {
+const LoginForm = () => {
+    
+    const navigate = useNavigate();
 
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
-    const [ redirect , setRedirect ] = useState(false);
-    const [ user, setUser ] = useState({});
-    const [ auth, setAuth ] = useState("");
+
+    useEffect( () => {
+        const loggedInUser = window.localStorage.getItem('user');
+        if (loggedInUser) navigate('/');   
+    }, []);
 
     const login = async () => {
         try {
             const { data } = await axios.post(process.env.REACT_APP_API_URL+"users/login", { email, password });
-            setUser(data.user);
-            setAuth(process.env.REACT_APP_API_SECRET + " " + data.token)
-            setLogin(true);
-            setRedirect(true);
+            window.localStorage.removeItem('user');
+            window.localStorage.setItem(
+                'user', 
+                JSON.stringify({
+                    Authorization: data.token,
+                    user: data.user
+                })
+            );
+            navigate('/');   
         } catch (err) {
             console.log(err);
         }
-    }
-
-    if (redirect) {
-        return <Redirect to={{
-            pathname: '/',
-            state: { user, config: {'headers':{ 'Authorization': auth }} }
-        }}/>;
     }
 
     return (

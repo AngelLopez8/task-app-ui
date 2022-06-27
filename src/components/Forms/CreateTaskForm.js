@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { Redirect, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const CreateTaskForm = () => {
 
-    const { state: { user, config }} = useLocation();
-
     const [ task, setTask ]  = useState({});
-    const [ redirect, setRedirect ] = useState(false);
 
     const createTask = async () => {
         try {
@@ -22,10 +18,6 @@ const CreateTaskForm = () => {
     const handleSubmit = e => {
         e.preventDefault();
         createTask();
-    }
-
-    if (redirect) {
-        return <Redirect to={{ pathname:"/", state: { user, config }}} />;
     }
 
     return (

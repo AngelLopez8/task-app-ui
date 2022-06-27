@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const SignUpForm = ({ setLogin }) => {
+const SignUpForm = () => {
+
+    const navigate = useNavigate();
     
     const [ name, setName ] = useState("");
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
     const [ confirm, setConfirm ] = useState("");
     const [ age, setAge ] = useState(undefined);
-    const [ user, setUser ] = useState({});
-    const [ auth, setAuth ] = useState("");
-    const [ redirect, setRedirect ] = useState(false);
 
     const signUp = async () => {
         try {
             const { data } = await axios.post(process.env.REACT_APP_API_URL+"users/", { name, email, password, age });
-            setUser(data.user);
-            setAuth(process.env.SECRET + " " + data.token);
-            setLogin(true);
-            setRedirect(!redirect);
+            window.localStorage.removeItem('user');
+            window.localStorage.setItem(
+                'user', 
+                JSON.stringify({
+                    Authorization: data.token,
+                    user: data.user
+                })
+            );
+            navigate('/'); 
         } catch (err) {
             console.log(err);
         }
@@ -30,13 +34,6 @@ const SignUpForm = ({ setLogin }) => {
         if (password === confirm) {
             signUp();
         }
-    }
-
-    if (redirect) {
-        return <Redirect to={{
-            pathname: "/",
-            state: { user, config: {'headers': { 'Authorization': auth }} }
-        }} />;
     }
 
     return (

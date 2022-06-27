@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Task = ({ description, completed, _id, config, setTasks }) => {
+const Task = ({ description, completed, _id, user, setTasks }) => {
 
     const [ check, setCheck ] = useState(!completed);
     const [ desc, setDesc ] = useState(description);
@@ -12,10 +12,12 @@ const Task = ({ description, completed, _id, config, setTasks }) => {
 
     const updateTask = async () => {
         try {
-            await axios.patch(
-                `${process.env.REACT_APP_API_URL}tasks/${_id}`, 
-                { 'completed': check, 'description': desc}, 
-                config);
+            await axios.patch(`${process.env.REACT_APP_API_URL}tasks/${_id}`, 
+                { completed: check, description: desc},  {
+                headers: {
+                    Authorization: user.Authorization
+                }
+            });
             setTasks([]);
         } catch (err) {
             console.log(err);
@@ -24,7 +26,11 @@ const Task = ({ description, completed, _id, config, setTasks }) => {
 
     const deleteTask = async () => {
         try {
-            await axios.delete(`${process.env.REACT_APP_API_URL}tasks/${_id}`, config);
+            await axios.delete(`${process.env.REACT_APP_API_URL}tasks/${_id}`, {
+                headers: {
+                    Authorization: user.Authorization
+                }
+            });
             setTasks([]);
         } catch (err) {
             console.log(err);
