@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Container, Form, Button } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 
 const LoginForm = () => {
@@ -32,30 +34,33 @@ const LoginForm = () => {
     }
 
     return (
-        <form 
-            className="form"
-            onSubmit={ e => {
-                e.preventDefault();
-                login();
-            }}>
-                <h1 className="form-header">Login</h1>
-                <input
-                    type="email" 
-                    id="email" 
-                    name="email"
-                    placeholder="Email"
-                    onChange={ e => setEmail(e.target.value) }
-                />
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Password" 
-                    onChange={ e => setPassword(e.target.value) }
-                />
-                <input type="submit" value="Login"/>
-                <p><b>Don't have an account? </b><a href="/signup">Create an account</a></p>
-        </form>
+        <Container style={{ height: '100vh' }} className='d-flex align-items-center justify-content-center'>
+            <Container className='bg-light text-dark'>
+                <h1 className='text-center'>Login</h1>
+                <Form onSubmit={ e => {
+                    e.preventDefault();
+                    login();
+                }}>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Email Address</Form.Label>
+                        <Form.Control type="email" placeholder="example@email.com" onChange={ e => setEmail(e.target.value) }/>
+                        <Form.Text className="text-muted">
+                            We'll never share your email with anyone else.
+                        </Form.Text>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" placeholder="Password" onChange={ e => setPassword(e.target.value) }/>
+                    </Form.Group>
+                    <Button variant="outline-primary" type="submit">
+                    Login
+                    </Button>
+                    <p className='text-center'><b>Don't have an account? </b><a href="/signup">Create an account</a></p>
+                </Form>
+            </Container>
+        </Container>
+        
     );
 };
 
